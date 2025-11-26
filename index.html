@@ -1,0 +1,409 @@
+import React, { useState, useEffect } from 'react';
+import { Activity, Hammer, Search, FileText, ChevronRight, TrendingUp, AlertTriangle, Users, BookOpen, Camera, Zap } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
+
+// 數據：實驗結果摘要
+const dataSummary = [
+  { name: '直達波 V1', speed: 430, unit: 'm/s', fill: '#60a5fa' },
+  { name: '折射波 V2', speed: 1037, unit: 'm/s', fill: '#34d399' },
+];
+
+const thicknessData = [
+  { point: '0m', depth: 4.55 },
+  { point: '6m', depth: 4.48 },
+  { point: '12m', depth: 4.43 },
+  { point: '18m', depth: 2.51 }, // 明顯較淺
+  { point: '24m', depth: 3.83 },
+  { point: '30m', depth: 4.30 },
+  { point: '36m', depth: 3.93 },
+  { point: '42m', depth: 3.49 },
+  { point: '46m', depth: 3.83 },
+];
+
+const App = () => {
+  const [activeSection, setActiveSection] = useState('intro');
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
+
+  const navItems = [
+    { id: 'purpose', label: '實驗目的', icon: <BookOpen size={18} /> },
+    { id: 'principle', label: '實驗原理', icon: <Search size={18} /> },
+    { id: 'process', label: '器材與過程', icon: <Hammer size={18} /> },
+    { id: 'analysis', label: '數據分析', icon: <TrendingUp size={18} /> },
+    { id: 'conclusion', label: '結論與心得', icon: <FileText size={18} /> },
+  ];
+
+  const scrollToSection = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+      setActiveSection(id);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans selection:bg-blue-100 selection:text-blue-900">
+      {/* Header / Navigation */}
+      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-2 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+              <div className="bg-blue-600 p-1.5 rounded-lg text-white">
+                <Activity size={20} />
+              </div>
+              <span className="font-bold text-lg tracking-tight text-slate-900 hidden sm:block">折射震測實驗</span>
+            </div>
+            <div className="hidden md:flex space-x-1">
+              {navItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => scrollToSection(item.id)}
+                  className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-all ${
+                    activeSection === item.id
+                      ? 'bg-blue-50 text-blue-700'
+                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                  }`}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </button>
+              ))}
+            </div>
+            {/* Mobile Menu Icon would go here */}
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <div className="relative bg-white overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute inset-y-0 right-0 w-1/2 bg-slate-50 rounded-l-3xl transform translate-x-1/2 rotate-3 opacity-50"></div>
+        </div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+          <div className={`transition-all duration-1000 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+            <div className="flex justify-center mb-6">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                地球物理學實驗報告
+              </span>
+            </div>
+            <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 text-center tracking-tight mb-6">
+              折射震測實驗
+              <span className="block text-blue-600 text-2xl md:text-3xl mt-2 font-semibold">Seismic Refraction Experiment</span>
+            </h1>
+            <p className="mt-4 max-w-2xl mx-auto text-xl text-slate-500 text-center">
+              利用地震波折射原理，探索看不見的地下構造。
+            </p>
+            <div className="mt-8 flex justify-center space-x-4">
+              <div className="flex items-center space-x-2 text-slate-600 bg-white shadow-sm border px-4 py-2 rounded-full">
+                <Users size={16} />
+                <span className="text-sm font-medium">洪敏書 · 李政皚 · 林靖融</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24">
+
+        {/* Purpose Section */}
+        <section id="purpose" className="scroll-mt-24">
+          <div className="flex items-center space-x-3 mb-8">
+            <div className="h-8 w-1 bg-blue-500 rounded-full"></div>
+            <h2 className="text-3xl font-bold text-slate-900">實驗目的</h2>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { title: "原理熟悉", desc: "掌握地震折射法的基本物理原理與野外操作流程。", color: "bg-blue-50 border-blue-100" },
+              { title: "數據反演", desc: "學習利用走時資料（Travel Time）推算地下地層波速與厚度。", color: "bg-emerald-50 border-emerald-100" },
+              { title: "實務應用", desc: "體驗地球物理方法在地下構造探勘與工程上的實際運用。", color: "bg-indigo-50 border-indigo-100" }
+            ].map((card, idx) => (
+              <div key={idx} className={`p-6 rounded-2xl border ${card.color} transition-hover duration-300 hover:shadow-lg`}>
+                <h3 className="text-lg font-bold text-slate-800 mb-2">{card.title}</h3>
+                <p className="text-slate-600 leading-relaxed">{card.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Principle Section with Visualization */}
+        <section id="principle" className="scroll-mt-24">
+           <div className="flex items-center space-x-3 mb-8">
+            <div className="h-8 w-1 bg-purple-500 rounded-full"></div>
+            <h2 className="text-3xl font-bold text-slate-900">實驗原理</h2>
+          </div>
+
+          <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
+            <div className="grid md:grid-cols-2">
+              <div className="p-8 md:p-10 flex flex-col justify-center bg-slate-900 text-white relative overflow-hidden">
+                {/* Visualizing Snell's Law / Refraction */}
+                <div className="relative z-10 h-64 w-full bg-slate-800/50 rounded-xl border border-slate-700 p-4">
+                  <div className="absolute top-2 left-4 text-xs text-slate-400">示意圖：地震波傳遞路徑</div>
+                  <svg className="w-full h-full" viewBox="0 0 400 200">
+                    {/* Layers */}
+                    <rect x="0" y="0" width="400" height="100" fill="#1e293b" /> {/* Layer 1 */}
+                    <rect x="0" y="100" width="400" height="100" fill="#334155" /> {/* Layer 2 */}
+                    <line x1="0" y1="100" x2="400" y2="100" stroke="#94a3b8" strokeWidth="1" strokeDasharray="4 4" />
+                    <text x="10" y="90" fill="#94a3b8" fontSize="12">地表層 (V1 慢)</text>
+                    <text x="10" y="120" fill="#94a3b8" fontSize="12">基岩層 (V2 快)</text>
+                    
+                    {/* Source */}
+                    <circle cx="50" cy="0" r="6" fill="#ef4444" />
+                    <text x="40" y="-10" fill="#ef4444" fontSize="10">震源</text>
+
+                    {/* Direct Wave */}
+                    <path d="M 50 2 Q 200 20 350 2" stroke="#60a5fa" strokeWidth="2" fill="none" opacity="0.6" />
+                    
+                    {/* Refracted Wave (Critical) */}
+                    <path d="M 50 0 L 120 100" stroke="#34d399" strokeWidth="2" fill="none" /> {/* Down */}
+                    <path d="M 120 100 L 280 100" stroke="#34d399" strokeWidth="3" strokeDasharray="5 5" fill="none">
+                       <animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite" />
+                    </path> {/* Across */}
+                    <path d="M 280 100 L 350 0" stroke="#34d399" strokeWidth="2" fill="none" /> {/* Up */}
+                    
+                    {/* Receiver */}
+                    <rect x="345" y="-5" width="10" height="10" fill="#fbbf24" />
+                    <text x="335" y="-15" fill="#fbbf24" fontSize="10">檢波器</text>
+                  </svg>
+                  <div className="mt-2 flex justify-between text-xs text-slate-300">
+                     <span className="flex items-center"><span className="w-2 h-2 rounded-full bg-blue-400 mr-1"></span>直達波</span>
+                     <span className="flex items-center"><span className="w-2 h-2 rounded-full bg-emerald-400 mr-1"></span>臨界折射波</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-8 md:p-10 space-y-6">
+                <div>
+                  <h3 className="text-xl font-bold text-slate-800 mb-2">司乃爾定律 (Snell's Law)</h3>
+                  <p className="text-slate-600">
+                    當震波接觸地層介面時，部分波產生折射。若入射角達到臨界角，波會沿著交界面以較快的速度（V2）傳遞，這就是<span className="font-bold text-emerald-600">臨界折射波</span>。
+                  </p>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-slate-800 mb-2">走時曲線分析</h3>
+                  <p className="text-slate-600">
+                    繪製「距離-時間圖」。在近距離，直達波最快；在遠距離，折射波雖然路徑長但速度快，會先到達。兩者相交點稱為<span className="font-bold text-blue-600">轉折點 (Crossover Distance)</span>。
+                  </p>
+                </div>
+                <div className="bg-orange-50 p-4 rounded-xl border border-orange-100">
+                  <p className="text-sm text-orange-800 font-medium">
+                    核心公式概念：利用轉折點與斜率，即可求出 V1, V2 與深度 h。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Process Section */}
+        <section id="process" className="scroll-mt-24">
+          <div className="flex items-center space-x-3 mb-8">
+            <div className="h-8 w-1 bg-amber-500 rounded-full"></div>
+            <h2 className="text-3xl font-bold text-slate-900">器材與實驗過程</h2>
+          </div>
+
+          <div className="space-y-8 mb-12">
+            {/* Image Block 1: Equipment (Image Left, Text Right) */}
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+              <div className="grid md:grid-cols-5">
+                <div className="md:col-span-3 h-64 md:h-auto">
+                   <img 
+                    src="https://raw.githubusercontent.com/cwbdayi/finalterm_report_draft/main/exp_materials.PNG" 
+                    alt="實驗器材總覽" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="p-6 md:col-span-2 bg-slate-50 flex flex-col justify-center">
+                   <div className="flex items-center mb-3 text-amber-600">
+                      <Camera size={20} className="mr-2"/>
+                      <span className="font-bold text-sm uppercase tracking-wider">實驗器材實拍</span>
+                   </div>
+                   <h3 className="text-lg font-bold text-slate-900 mb-3">震測設備一覽</h3>
+                   <p className="text-slate-600 text-sm mb-4">
+                     照片展示了本次實驗的關鍵設備，包含數據擷取系統、受波器陣列以及人工震源裝置。
+                   </p>
+                   <div className="space-y-2">
+                      {['資料擷取系統 (Seismograph)', '受波器 (Geophones, 24個)', '訊號傳輸電纜 (Cables)', '震源：大鐵鎚與鐵板'].map((item, i)=>(
+                        <div key={i} className="flex items-center text-xs font-medium text-slate-500 bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-sm">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mr-2"></span>
+                          {item}
+                        </div>
+                      ))}
+                   </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Image Block 2: Process (Text Left, Image Right) */}
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+              <div className="grid md:grid-cols-5">
+                <div className="p-6 md:col-span-2 bg-slate-50 flex flex-col justify-center order-2 md:order-1">
+                   <div className="flex items-center mb-3 text-blue-600">
+                      <Zap size={20} className="mr-2"/>
+                      <span className="font-bold text-sm uppercase tracking-wider">野外操作實況</span>
+                   </div>
+                   <h3 className="text-lg font-bold text-slate-900 mb-3">震源激發與觀測</h3>
+                   <p className="text-slate-600 text-sm mb-4">
+                     組員正在進行野外觀測。圖中可見一名組員利用大鐵鎚敲擊鐵板產生人工震波，另一名組員則操作電腦進行即時數據監控與記錄。
+                   </p>
+                   <div className="flex flex-wrap gap-2">
+                      {['人工震源激發', '即時數據監控', '團隊分工合作'].map((tag, i) => (
+                        <span key={i} className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-md font-medium">
+                          #{tag}
+                        </span>
+                      ))}
+                   </div>
+                </div>
+                <div className="md:col-span-3 h-64 md:h-auto order-1 md:order-2">
+                   <img 
+                    src="https://raw.githubusercontent.com/cwbdayi/finalterm_report_draft/main/pic_exp.PNG" 
+                    alt="野外實驗過程" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Process Steps List */}
+          <div className="relative border-l-2 border-slate-200 ml-4 md:ml-6 space-y-12">
+            {[
+              { title: "佈置測線", desc: "鋪設50公尺皮尺，每隔2公尺垂直埋入一個檢波器(Geophone)，共24個。", icon: "1" },
+              { title: "系統連接", desc: "將檢波器連接至資料擷取系統，確保訊號能數位化傳輸至電腦。", icon: "2" },
+              { title: "震源激發", desc: "使用鐵鎚敲擊鐵板作為人工震源。鐵板需穩固接觸地面以傳遞能量。", icon: "3" },
+              { title: "移動觀測", desc: "完成一組測量後，依序將震源向後移動6公尺，重複敲擊與紀錄，直到完成所有測點。", icon: "4" }
+            ].map((step, idx) => (
+              <div key={idx} className="relative pl-8 md:pl-12">
+                <div className="absolute -left-[9px] top-0 bg-white border-4 border-amber-400 text-slate-700 font-bold rounded-full w-8 h-8 flex items-center justify-center text-sm shadow-sm">
+                  {step.icon}
+                </div>
+                <h3 className="text-xl font-bold text-slate-800 mb-2">{step.title}</h3>
+                <p className="text-slate-600">{step.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Analysis Section */}
+        <section id="analysis" className="scroll-mt-24">
+          <div className="flex items-center space-x-3 mb-8">
+            <div className="h-8 w-1 bg-emerald-500 rounded-full"></div>
+            <h2 className="text-3xl font-bold text-slate-900">數據分析與結果</h2>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-8">
+            {/* Chart 1: Velocity */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+              <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                <TrendingUp className="mr-2 text-emerald-500" size={20} />
+                波速計算結果 (修正後)
+              </h3>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={dataSummary} layout="vertical" margin={{ left: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={true} />
+                    <XAxis type="number" unit=" m/s" />
+                    <YAxis type="category" dataKey="name" width={80} />
+                    <Tooltip 
+                      contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                      cursor={{fill: '#f1f5f9'}}
+                    />
+                    <Bar dataKey="speed" radius={[0, 4, 4, 0]} barSize={40} label={{ position: 'right', fill: '#64748b' }}>
+                      {dataSummary.map((entry, index) => (
+                        <cell key={`cell-${index}`} fill={entry.fill} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <p className="mt-4 text-sm text-slate-500 bg-slate-50 p-3 rounded-lg">
+                <span className="font-bold">分析發現：</span> 折射波速度 ($V_2 \approx 1037 m/s$) 明顯快於直達波 ($V_1 \approx 430 m/s$)，符合地層越深越緻密的物理特性。
+              </p>
+            </div>
+
+            {/* Chart 2: Depth Profile */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+              <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                 <Activity className="mr-2 text-blue-500" size={20} />
+                 推算地層厚度 (h) 分布
+              </h3>
+              <div className="h-64">
+                 <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={thicknessData} margin={{ bottom: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="point" angle={-45} textAnchor="end" height={60} tick={{fontSize: 12}} />
+                    <YAxis label={{ value: '深度 (m)', angle: -90, position: 'insideLeft' }} />
+                    <Tooltip cursor={{fill: '#f1f5f9'}} />
+                    <Bar dataKey="depth" fill="#8b5cf6" radius={[4, 4, 0, 0]} name="地層深度" />
+                    <ReferenceLine y={3.8} stroke="red" strokeDasharray="3 3" label={{ value: '平均', position: 'right', fill: 'red', fontSize: 10 }} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+               <p className="mt-4 text-sm text-slate-500 bg-slate-50 p-3 rounded-lg">
+                <span className="font-bold">臨界角：</span> 約 $23^\circ \sim 25^\circ$。<br/>
+                <span className="font-bold">厚度變化：</span> 18m處顯示地層較淺 ($2.51m$)，整體平均約 $3.8m$。
+              </p>
+            </div>
+          </div>
+
+          {/* Data Correction Note */}
+          <div className="mt-8 bg-blue-50 rounded-xl p-6 border border-blue-100 flex items-start space-x-4">
+             <AlertTriangle className="text-blue-500 flex-shrink-0 mt-1" />
+             <div>
+               <h4 className="font-bold text-blue-900 mb-1">關於數據修正</h4>
+               <p className="text-blue-800 text-sm leading-relaxed">
+                 初次計算時發現 $V_1$ 誤差過大。小組進行了第二次計算，移除了偏離過大的異常值（Outliers），並重新選取更精確的讀數，最終獲得上述較為合理的物理參數。
+               </p>
+             </div>
+          </div>
+        </section>
+
+        {/* Conclusion Section */}
+        <section id="conclusion" className="scroll-mt-24 mb-24">
+          <div className="flex items-center space-x-3 mb-8">
+            <div className="h-8 w-1 bg-slate-500 rounded-full"></div>
+            <h2 className="text-3xl font-bold text-slate-900">結論與檢討</h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-white p-8 rounded-2xl shadow-lg border-t-4 border-red-400">
+              <h3 className="text-xl font-bold text-slate-800 mb-4">遇到的困難</h3>
+              <ul className="space-y-3">
+                <li className="flex items-start">
+                  <span className="inline-block w-2 h-2 bg-red-400 rounded-full mt-2 mr-3"></span>
+                  <span className="text-slate-600"><strong>環境噪音：</strong> 實驗地點鄰近馬路，車輛震動與引擎聲對訊號造成干擾。</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="inline-block w-2 h-2 bg-red-400 rounded-full mt-2 mr-3"></span>
+                  <span className="text-slate-600"><strong>器材架設：</strong> 檢波器必須嚴格垂直插入地面，傾斜會導致訊號接收不良。</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="bg-white p-8 rounded-2xl shadow-lg border-t-4 border-green-400">
+               <h3 className="text-xl font-bold text-slate-800 mb-4">心得收穫</h3>
+               <p className="text-slate-600 leading-relaxed">
+                 雖然過程繁瑣且受外在環境（如噪音、井蓋）影響，但能將課堂上的理論公式轉化為實際操作，親自計算出地層深度與波速，成功驗證了地球物理原理的實際應用，是非常寶貴的經驗。
+               </p>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-slate-900 text-slate-400 py-12">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <p className="mb-4 text-slate-100 font-medium">地球物理折射震測實驗報告</p>
+          <p className="text-sm">組員：洪敏書 · 李政皚 · 林靖融</p>
+          <p className="text-xs mt-8 opacity-50">&copy; 2025 National Geophysics Lab Project</p>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default App;
